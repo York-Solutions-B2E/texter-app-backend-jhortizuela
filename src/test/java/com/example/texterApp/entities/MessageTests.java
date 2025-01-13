@@ -1,5 +1,6 @@
 package com.example.texterApp.entities;
 
+import com.example.texterApp.enums.MessageStatus;
 import com.example.texterApp.repositories.MessageRepository;
 import com.example.texterApp.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,11 +34,12 @@ public class MessageTests {
         userRepository.save(user);
 
         // Create a new Message
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        LocalDateTime dateTime = LocalDateTime.of(2025, 1, 13, 12, 32, 54);
         Message message = new Message();
         message.setText("Hello, World!");
-        message.setTimestamp(timestamp);
+        message.setTimestamp(dateTime);
         message.setUser(user);
+        message.setStatus(MessageStatus.SENT);
 
         // Persist the Message
         messageRepository.save(message);
@@ -47,7 +50,7 @@ public class MessageTests {
         // Assertions
         assertNotNull(retrievedMessage);
         assertEquals("Hello, World!", retrievedMessage.getText());
-        assertEquals(timestamp, retrievedMessage.getTimestamp());
+        assertEquals(dateTime, retrievedMessage.getTimestamp());
         assertEquals(user.getId(), retrievedMessage.getUser().getId());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.texterApp.entities;
 
+import com.example.texterApp.enums.MessageStatus;
 import com.example.texterApp.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@Transactional
 public class UserTests {
 
     @Autowired
@@ -28,16 +31,17 @@ public class UserTests {
         // Create Messages
         Message message1 = new Message();
         message1.setText("Hello, World!");
-        message1.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        message1.setTimestamp(LocalDateTime.now());
         message1.setUser(user);
+        message1.setStatus(MessageStatus.SENT);
+        user.addMessage(message1);
 
         Message message2 = new Message();
         message2.setText("Spring Boot is great!");
-        message2.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        message2.setTimestamp(LocalDateTime.now());
         message2.setUser(user);
-
-        // Add Messages to User
-        user.setMessages(List.of(message1, message2));
+        message2.setStatus(MessageStatus.SENT);
+        user.addMessage(message2);
 
         // Save User (and Messages due to CascadeType.ALL)
         userRepository.save(user);

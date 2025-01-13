@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,13 +44,13 @@ public class DatabaseSeeder implements CommandLineRunner {
         // Create sample messages
         Message message1 = new Message();
         message1.setText("Hello, this is a message from John.");
-        message1.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        message1.setTimestamp(LocalDateTime.now());
         message1.setUser(user1);
         messageRepository.save(message1);
 
         Message message2 = new Message();
         message2.setText("Hi, this is a message from Jane.");
-        message2.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        message2.setTimestamp(LocalDateTime.now());
         message2.setUser(user2);
         messageRepository.save(message2);
 

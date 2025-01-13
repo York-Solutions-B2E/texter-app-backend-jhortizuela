@@ -1,36 +1,21 @@
-package com.example.texterApp.entities;
+package com.example.texterApp.dtos;
 
 import com.example.texterApp.enums.MessageStatus;
-import jakarta.persistence.*;
-import jakarta.transaction.Transactional;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-
-@Entity
 @Data
 @NoArgsConstructor
-public class Message {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String text;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MessageStatus status;
-
-    @Column(nullable = false)
-    private LocalDateTime timestamp;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+@AllArgsConstructor
+public class MessageDTO {
+    public Long id;
+    public String text;
+    public LocalDateTime timestamp;
+    public MessageStatus status;
 
     public Long getId() {
         return id;
@@ -54,14 +39,6 @@ public class Message {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public MessageStatus getStatus() {
