@@ -33,10 +33,10 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) {
         // Create Users
         User user1 = new User();
-        user1.setUsername("john_doe");
+        user1.setUsername("ashton");
 
         User user2 = new User();
-        user2.setUsername("jhortizu");
+        user2.setUsername("janika");
 
         // Save users to repository
         userRepository.saveAll(Arrays.asList(user1, user2));
@@ -50,39 +50,34 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // Create Messages
         Message message1 = new Message();
-        message1.setText("Hi Jane, how are you?");
+        message1.setText("Hi Janika, how's your project going?");
         message1.setTimestamp(LocalDateTime.now());
         message1.setStatus(MessageStatus.SENT);
         message1.setUser(user1);
         message1.setConversation(conversation);
 
         Message message2 = new Message();
-        message2.setText("Hi John! I'm good, how about you?");
+        message2.setText("Hi Ashton! I'm killing it! How about you?");
         message2.setTimestamp(LocalDateTime.now().plusMinutes(1));
         message2.setStatus(MessageStatus.SENT);
         message2.setUser(user2);
         message2.setConversation(conversation);
 
         Message message3 = new Message();
-        message3.setText("I'm doing well, thanks for asking!");
+        message3.setText("It's going perfect!");
         message3.setTimestamp(LocalDateTime.now().plusMinutes(2));
         message3.setStatus(MessageStatus.SENT);
         message3.setUser(user1);
         message3.setConversation(conversation);
-
-        messageRepository.saveAll(Arrays.asList(message1, message2, message3));
 
         // Add messages to the conversation
         conversation.addMessage(message1);
         conversation.addMessage(message2);
         conversation.addMessage(message3);
 
-        // Save messages to repository
-
-        // Update users with the conversation
-        user1.setConversations(Arrays.asList(conversation));
-        user2.setConversations(Arrays.asList(conversation));
-
-        userRepository.saveAll(Arrays.asList(user1, user2));
+        // Save updated conversation (and its messages)
+        conversationRepository.save(conversation);
     }
+
+
 }

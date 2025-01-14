@@ -20,7 +20,7 @@ public class Conversation {
     @ManyToMany(mappedBy = "conversations")
     private List<User> users;
 
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Message> messages;
 
     public Conversation() {
