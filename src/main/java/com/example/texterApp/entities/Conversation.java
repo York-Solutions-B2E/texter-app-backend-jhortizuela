@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,6 +22,15 @@ public class Conversation {
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
+
+    public Conversation() {
+    }
+
+    public Conversation(Long id, List<User> users, List<Message> messages) {
+        this.id = id;
+        this.users = users;
+        this.messages = messages;
+    }
 
     public Long getId() {
         return id;
@@ -42,7 +52,11 @@ public class Conversation {
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+    public void addMessage(Message message) {
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
+        }
+        this.messages.add(message);
+        message.setConversation(this);
     }
 }

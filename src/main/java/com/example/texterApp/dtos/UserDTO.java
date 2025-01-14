@@ -13,7 +13,6 @@ import java.util.List;
 public class UserDTO {
     public Long id;
     public String username;
-    public List<MessageDTO> messages;
 
     public Long getId() {
         return id;
@@ -31,11 +30,4 @@ public class UserDTO {
         this.username = username;
     }
 
-    public List<MessageDTO> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<MessageDTO> messages) {
-        this.messages = messages;
-    }
 }

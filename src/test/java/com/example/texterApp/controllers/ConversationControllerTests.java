@@ -6,22 +6,32 @@ import com.example.texterApp.entities.Message;
 import com.example.texterApp.entities.User;
 import com.example.texterApp.enums.MessageStatus;
 import com.example.texterApp.mappers.ConversationMapper;
+import com.example.texterApp.mappers.MessageMapper;
 import com.example.texterApp.repositories.ConversationRepository;
 import com.example.texterApp.repositories.MessageRepository;
 import com.example.texterApp.repositories.UserRepository;
 import com.example.texterApp.services.ConversationService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.zookeeper.server.controller.ControllerService;
 import org.checkerframework.checker.units.qual.A;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ConversationController.class)
@@ -41,7 +51,15 @@ public class ConversationControllerTests {
     private ConversationMapper conversationMapper;
     @MockBean
     private ConversationService conversationService;
+    @MockBean
+    private MessageMapper messageMapper;
 
+    private ObjectMapper objectMapper;
+
+    @BeforeEach
+    void setUp() {
+        objectMapper = new ObjectMapper();  // Initialize the ObjectMapper for JSON conversion
+    }
 
     @Test
     public void testGetConversationById() throws Exception {
@@ -82,4 +100,5 @@ public class ConversationControllerTests {
         mockMvc.perform(get("/api/conversations/{id}", 1L))
                 .andExpect(status().isOk());
     }
+
 }

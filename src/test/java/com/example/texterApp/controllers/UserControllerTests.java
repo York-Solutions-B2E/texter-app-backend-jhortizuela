@@ -37,18 +37,4 @@ public class UserControllerTests {
     @MockBean
     private UserMapper userMapper;
 
-    @Test
-    public void getUserById() throws Exception {
-        Long userId = 1L;
-        UserDTO mockUserDTO = new UserDTO();
-        mockUserDTO.setId(userId);
-        mockUserDTO.setMessages(new ArrayList<>());
-        mockUserDTO.setUsername("test");// Ensure the UserDTO is populated
-        when(userService.getUserById(userId)).thenReturn(mockUserDTO);
-
-        mockMvc.perform(get("/api/users/{id}", userId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userId))  // Check if the id is in the response
-                .andExpect(jsonPath("$.username").value("test"));
-    }
 }

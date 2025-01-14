@@ -73,7 +73,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         messageRepository.saveAll(Arrays.asList(message1, message2, message3));
 
         // Add messages to the conversation
-        conversation.setMessages(Arrays.asList(message1, message2, message3));
+        conversation.addMessage(message1);
+        conversation.addMessage(message2);
+        conversation.addMessage(message3);
 
         // Save messages to repository
 

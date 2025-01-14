@@ -1,5 +1,6 @@
 package com.example.texterApp.dtos;
 
+import com.example.texterApp.entities.User;
 import com.example.texterApp.enums.MessageStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class MessageDTO {
     public String text;
     public LocalDateTime timestamp;
     public MessageStatus status;
+    public UserDTO user;
 
     public Long getId() {
         return id;
@@ -47,5 +49,13 @@ public class MessageDTO {
 
     public void setStatus(MessageStatus status) {
         this.status = status;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 }
