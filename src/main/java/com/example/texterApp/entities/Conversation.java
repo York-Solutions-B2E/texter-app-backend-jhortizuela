@@ -23,15 +23,6 @@ public class Conversation {
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Message> messages;
 
-    public Conversation() {
-    }
-
-    public Conversation(Long id, List<User> users, List<Message> messages) {
-        this.id = id;
-        this.users = users;
-        this.messages = messages;
-    }
-
     public Long getId() {
         return id;
     }

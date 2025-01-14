@@ -122,9 +122,6 @@
 							<artifactId>mapstruct-processor</artifactId>
 							<version>${org.mapstruct.version}</version>
 						</path>
-						<!-- Include other annotation processors if needed -->
-					</annotationProcessorPaths>
-					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
@@ -132,9 +129,6 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
-
-
-
 			</plugin>
 		</plugins>
 	</build>

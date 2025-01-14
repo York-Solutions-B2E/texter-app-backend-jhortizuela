@@ -16,14 +16,6 @@ public class ConversationDTO {
     public List<UserDTO> users;
     public List<MessageDTO> messages;
 
-    public ConversationDTO(Long id, List<UserDTO> users, List<MessageDTO> messages) {
-        this.id = id;
-        this.users = users;
-        this.messages = messages;
-    }
-
-    public ConversationDTO() {
-    }
 
     public Long getId() {
         return id;
