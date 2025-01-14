@@ -53,7 +53,8 @@ public class ConversationTests {
         message2.setStatus(MessageStatus.SENT);
         message2.setConversation(conversation);
 
-        conversation.setMessages(List.of(message1, message2));
+        conversation.addMessage(message1);
+        conversation.addMessage(message2);
 
         // Step 4: Save the Conversation (cascade saves Users and Messages)
         conversationRepository.save(conversation);

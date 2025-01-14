@@ -26,4 +26,10 @@ public class MessageController {
         MessageDTO deletedMessage = messageService.deleteMessage(id, messageDTO);
         return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<MessageDTO> updateMessage(@PathVariable Long id, @RequestBody MessageDTO messageDTO) {
+        MessageDTO deletedMessage = messageService.updateMessage(id, messageDTO);
+        return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
+    }
 }

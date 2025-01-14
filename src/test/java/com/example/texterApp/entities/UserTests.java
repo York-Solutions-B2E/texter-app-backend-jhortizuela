@@ -45,7 +45,7 @@ public class UserTests {
 
         Conversation conversation = new Conversation();
         conversation.setUsers(List.of(user));
-        conversation.setMessages(List.of(message1));
+        conversation.addMessage(message1);
         user.setConversations(List.of(conversation));
 
         // Save User (and Messages due to CascadeType.ALL)

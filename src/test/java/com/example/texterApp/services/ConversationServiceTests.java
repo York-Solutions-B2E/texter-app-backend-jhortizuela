@@ -65,7 +65,8 @@ public class ConversationServiceTests {
         Conversation conversation = new Conversation();
         conversation.setId(conversationId);
         conversation.setUsers(Arrays.asList(user1, user2));
-        conversation.setMessages(Arrays.asList(message1, message2));
+        conversation.addMessage(message1);
+        conversation.addMessage(message2);
 
         MessageDTO messageDTO1 = new MessageDTO();
         messageDTO1.setId(message1.getId());
