@@ -20,4 +20,10 @@ public class MessageController {
         MessageDTO createdMessage = messageService.postMessageToConversation(conversationId, messageDTO);
         return new ResponseEntity<>(createdMessage, HttpStatus.CREATED);
     }
+
+    @PutMapping("/{id}/delete")
+    public ResponseEntity<MessageDTO> deleteMessage(@PathVariable Long id, @RequestBody MessageDTO messageDTO) {
+        MessageDTO deletedMessage = messageService.deleteMessage(id, messageDTO);
+        return new ResponseEntity<>(deletedMessage, HttpStatus.OK);
+    }
 }
