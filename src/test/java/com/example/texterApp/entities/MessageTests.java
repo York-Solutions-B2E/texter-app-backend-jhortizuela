@@ -1,6 +1,7 @@
 package com.example.texterApp.entities;
 
 import com.example.texterApp.enums.MessageStatus;
+import com.example.texterApp.repositories.ConversationRepository;
 import com.example.texterApp.repositories.MessageRepository;
 import com.example.texterApp.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ public class MessageTests {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ConversationRepository conversationRepository;
+
     @Test
     public void testMessageEntity() {
         // Create a new User
@@ -40,6 +44,11 @@ public class MessageTests {
         message.setTimestamp(dateTime);
         message.setUser(user);
         message.setStatus(MessageStatus.SENT);
+
+        Conversation conversation = new Conversation();
+        conversationRepository.save(conversation);
+
+        message.setConversation(conversation);
 
         // Persist the Message
         messageRepository.save(message);

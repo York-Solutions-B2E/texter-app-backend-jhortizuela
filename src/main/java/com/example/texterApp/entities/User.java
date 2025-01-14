@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name="users")
+@Data
 public class User {
 
     @Id
@@ -20,6 +21,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Message> messages;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_conversation",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "conversation_id")
+    )
+    private List<Conversation> conversations;
 
     public void setUsername(String username) {
         this.username = username;
@@ -56,5 +64,15 @@ public class User {
         }
     }
 
+    public List<Conversation> getConversations() {
+        return conversations;
+    }
 
+    public void setConversations(List<Conversation> conversations) {
+        this.conversations = conversations;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 }

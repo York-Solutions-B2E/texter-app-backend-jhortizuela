@@ -47,7 +47,6 @@ public class UserControllerTests {
         when(userService.getUserById(userId)).thenReturn(mockUserDTO);
 
         mockMvc.perform(get("/api/users/{id}", userId))
-                .andDo(print())  // Print the response to inspect the content
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))  // Check if the id is in the response
                 .andExpect(jsonPath("$.username").value("test"));

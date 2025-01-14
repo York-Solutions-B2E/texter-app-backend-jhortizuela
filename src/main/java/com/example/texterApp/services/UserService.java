@@ -23,11 +23,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserDTO getUserById(Long id) {
-        return null;
-    }
-
-    public UserDTO findUserById(Long userId) {
+    public UserDTO getUserById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             return userMapper.entityToDTO(user.get());

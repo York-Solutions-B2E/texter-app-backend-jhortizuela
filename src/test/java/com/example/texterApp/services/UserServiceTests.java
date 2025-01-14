@@ -53,7 +53,7 @@ public class UserServiceTests {
 
         when(userMapper.entityToDTO(mockUser)).thenReturn(mockUserDTO);
 
-        UserDTO result = userService.findUserById(userId);
+        UserDTO result = userService.getUserById(userId);
 
         assertEquals("username", result.getUsername());
     }

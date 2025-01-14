@@ -43,6 +43,11 @@ public class UserTests {
         message2.setStatus(MessageStatus.SENT);
         user.addMessage(message2);
 
+        Conversation conversation = new Conversation();
+        conversation.setUsers(List.of(user));
+        conversation.setMessages(List.of(message1));
+        user.setConversations(List.of(conversation));
+
         // Save User (and Messages due to CascadeType.ALL)
         userRepository.save(user);
 
