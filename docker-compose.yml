@@ -29,9 +29,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: yorkmacbook059
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: texter-app
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
 
   spring-api:
     build:
@@ -44,8 +46,19 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/texter-app
-      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_USERNAME: yorkmacbook059
       SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       - kafka
       - postgres
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "5050:80"  # Expose pgAdmin on localhost:5050
+    depends_on:
+      - postgres  # Ensure Postgres starts before pgAdmin

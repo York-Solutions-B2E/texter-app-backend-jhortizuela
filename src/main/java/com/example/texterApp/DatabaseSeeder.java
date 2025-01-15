@@ -43,7 +43,8 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // Create Conversation
         Conversation conversation = new Conversation();
-        conversation.setUsers(Arrays.asList(user1, user2));
+        conversation.addUser(user1);
+        conversation.addUser(user2);
 
         // Save conversation to repository
         conversationRepository.save(conversation);
@@ -57,7 +58,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         message1.setConversation(conversation);
 
         Message message2 = new Message();
-        message2.setText("Hi Ashton! I'm killing it! How about you?");
+        message2.setText("Yo yo yo i'm killing it!");
         message2.setTimestamp(LocalDateTime.now().plusMinutes(1));
         message2.setStatus(MessageStatus.SENT);
         message2.setUser(user2);

@@ -17,7 +17,7 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "conversations")
+    @ManyToMany(mappedBy = "conversations", fetch = FetchType.EAGER)
     private List<User> users;
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -49,5 +49,16 @@ public class Conversation {
         }
         this.messages.add(message);
         message.setConversation(this);
+    }
+
+    public void addUser(User user) {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
+        this.users.add(user);
+        if (user.getConversations() == null) {
+            user.setConversations(new ArrayList<>());
+        }
+        user.getConversations().add(this);
     }
 }

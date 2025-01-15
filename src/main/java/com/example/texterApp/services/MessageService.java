@@ -26,8 +26,6 @@ public class MessageService {
     }
 
     public MessageDTO postMessageToConversation(Long conversationId, MessageDTO messageDTO) {
-        //find conversation
-        //add message to conversation
         Conversation conversation = conversationRepository.getReferenceById(conversationId);
 
         if (conversation == null) {
