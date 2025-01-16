@@ -3,6 +3,16 @@ package com.example.texterApp.kafka;
 import java.time.LocalDateTime;
 
 public class Event {
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     private String message;
     private LocalDateTime timestamp;
     private String username;

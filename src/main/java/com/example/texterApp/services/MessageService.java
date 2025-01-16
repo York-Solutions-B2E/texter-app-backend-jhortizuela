@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -45,21 +46,36 @@ public class MessageService {
             throw new EntityNotFoundException("Conversation with id " + conversationId + " not found");
         }
 
-        conversation.addMessage(messageMapper.dtoToEntity(messageDTO));
+        // Create and save the new message
+        Message newMessage = messageMapper.dtoToEntity(messageDTO);
+        messageRepository.save(newMessage); // This should generate the id
+
+        // Now, retrieve the generated id
+        Long messageId = newMessage.getId();
+        if (messageId == null) {
+            throw new IllegalStateException("Message ID was not generated.");
+        }
+
+        messageDTO.setId(messageId);
+
+        // Add the message to the conversation and save the conversation
+        conversation.addMessage(newMessage);
         conversationRepository.save(conversation);
 
-        // Create and send the event to Kafka
+        // Create and send the event to Kafka with the generated message ID
         Event event = new Event();
         event.setMessage(messageDTO.getText());
         event.setTimestamp(LocalDateTime.now());
-        event.setUsername(messageDTO.getUser().getUsername()); // Assuming `MessageDTO` has a `username` field
-        event.setUserId(messageDTO.getUser().getId());   // Assuming `MessageDTO` has a `userId` field
-        event.setStatus("SENT"); // You can modify the status as needed
+        event.setUsername(messageDTO.getUser().getUsername());
+        event.setUserId(messageDTO.getUser().getId());
+        event.setStatus("SENT");
+        event.setId(messageId);  // Set the generated message ID to the event
 
-        // Send the event to Kafka using the Kafka service
+        // Send the event to Kafka
         kafkaProducerService.sendMessage(event);
 
         return messageDTO;
+
     }
 
     public MessageDTO deleteMessage(Long id, MessageDTO messageDTO) {
