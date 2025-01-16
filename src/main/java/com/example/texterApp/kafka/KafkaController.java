@@ -1,24 +1,20 @@
 package com.example.texterApp.kafka;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/kafka")
 public class KafkaController {
-    private final KafkaConsumer consumerService;
+    private final KafkaTemplate<String, Event> kafkaTemplate;
 
-    public KafkaController(KafkaConsumer consumerService) {
-        this.consumerService = consumerService;
+    public KafkaController(KafkaTemplate<String, Event> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
     }
 
-    @PostMapping("/receive")
-    public ResponseEntity<ConsumerEvent> sendMessages(@RequestBody ConsumerEvent e) {
-        consumerService.sendMessage("texter_events", e);
-        return ResponseEntity.ok(e);
+    @PostMapping("/publish")
+    public String publishMessage(@RequestParam String topic, @RequestBody Event event) {
+        kafkaTemplate.send(topic, event);
+        return "Message sent to topic: " + topic;
     }
 }

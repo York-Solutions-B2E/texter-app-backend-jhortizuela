@@ -2,18 +2,14 @@ package com.example.texterApp.kafka;
 
 import java.time.LocalDateTime;
 
-public class ProducerEvent {
+public class Event {
     private String message;
     private LocalDateTime timestamp;
     private String username;
+    private Long userId;
     private String status;
 
-    public ProducerEvent() {
-    }
-
-    public ProducerEvent(String message, LocalDateTime timestamp) {
-        this.message = message;
-        this.timestamp = timestamp;
+    public Event() {
     }
 
     public String getMessage() {
@@ -38,5 +34,21 @@ public class ProducerEvent {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

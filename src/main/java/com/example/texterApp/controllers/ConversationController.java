@@ -2,9 +2,11 @@ package com.example.texterApp.controllers;
 
 import com.example.texterApp.dtos.ConversationDTO;
 import com.example.texterApp.dtos.MessageDTO;
+import com.example.texterApp.kafka.KafkaProducerService;
 import com.example.texterApp.repositories.ConversationRepository;
 import com.example.texterApp.services.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,8 @@ public class ConversationController {
     private ConversationRepository conversationRepository;
     @Autowired
     private ConversationService conversationService;
+
+    KafkaProducerService kafkaProducerService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ConversationDTO> getConversationById(@PathVariable Long id) {
