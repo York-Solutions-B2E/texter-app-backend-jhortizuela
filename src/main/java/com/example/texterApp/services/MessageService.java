@@ -79,41 +79,57 @@ public class MessageService {
     }
 
     public MessageDTO deleteMessage(Long id, MessageDTO messageDTO) {
-        //find message
-        //change status to delete
-        //return message with deleted status
+        Message message = messageRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Message with id " + id + " not found"));
 
-        Message message = messageRepository.getReferenceById(id);
-
-        if (message == null) {
-            throw new EntityNotFoundException("Message with id " + id + " not found");
-        }
-
+        // Change the status to 'DELETE'
         message.setStatus(MessageStatus.DELETE);
-        messageRepository.save(message);
-        return messageDTO;
+        messageRepository.save(message);  // Save the message to update the status
+
+        // Do not modify the order of messages in the conversation
+        Conversation conversation = message.getConversation();
+        // No need to modify the messages list; it will remain the same
+
+        // Create the event to be sent to Kafka
+        Event event = new Event();
+        event.setId(message.getId());  // Set the message ID
+        event.setMessage(message.getText());  // Optionally, include the message text
+        event.setTimestamp(LocalDateTime.now());  // Set the timestamp
+        event.setUsername(message.getUser().getUsername());  // Set the username
+        event.setUserId(message.getUser().getId());  // Set the user ID
+        event.setStatus("DELETED");  // Set the new status as "DELETED"
+
+        // Send the event to Kafka
+        kafkaProducerService.sendMessage(event);
+
+        // Return the updated message DTO (optional)
+        return messageMapper.entityToDto(message);
     }
 
     public MessageDTO updateMessage(Long id, MessageDTO messageDTO) {
         Message message = messageRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Message with id " + id + " not found"));
 
-        // Only update the fields if they are provided in the DTO
-        if (messageDTO.getText() != null) {
+        // Check if the new text is different from the existing text
+        if (!messageDTO.getText().equals(message.getText())) {
+            // Update the message text
             message.setText(messageDTO.getText());
-        }
-        if (messageDTO.getStatus() != null) {
-            message.setStatus(messageDTO.getStatus());
-        }
-        if (messageDTO.getTimestamp() != null) {
-            message.setTimestamp(messageDTO.getTimestamp());
-        }
-        if (messageDTO.getUser() != null) {
-            message.setUser(userMapper.dtoToEntity(messageDTO.getUser()));
-        }
 
-        // Save the updated message to the repository
-        messageRepository.save(message);
+            // Save the updated message to the repository
+            messageRepository.save(message);
+
+            // Create the event to be sent to Kafka
+            Event event = new Event();
+            event.setId(message.getId());  // Set the message ID
+            event.setMessage(message.getText());  // Set the updated message text
+            event.setTimestamp(LocalDateTime.now());  // Set the current timestamp
+            event.setUsername(message.getUser().getUsername());  // Set the username
+            event.setUserId(message.getUser().getId());  // Set the user ID
+            event.setStatus(message.getStatus().name());  // Set the current status
+
+            // Send the event to Kafka
+            kafkaProducerService.sendMessage(event);
+        }
 
         // Return the updated message as a DTO
         return messageMapper.entityToDto(message);

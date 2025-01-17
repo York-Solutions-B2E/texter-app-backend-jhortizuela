@@ -15,6 +15,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.springframework.messaging.simp.SimpMessageHeaderAccessor.getUser;
@@ -44,10 +47,7 @@ public class KafkaConsumerService {
         System.out.println("Received event: " + event);  // Log the incoming event
 
         // Check if the event has the required fields
-        if (event.getUserId() == null || event.getId() == null) {
-            System.out.println("Invalid event data, skipping.");
-            return;
-        }
+
 
         // Find the existing message using userId and messageId
         Optional<Message> optionalMessage = messageRepository.findByUserIdAndId(event.getUserId(), event.getId());
@@ -55,18 +55,72 @@ public class KafkaConsumerService {
         if (optionalMessage.isPresent()) {
             Message message = optionalMessage.get();
 
-            // If the message exists and has not been marked as "READ", update the status
-            if (message.getStatus() != MessageStatus.READ) {
-                message.setStatus(MessageStatus.READ);
-                messageRepository.save(message); // Save the updated message
-                System.out.println("Updated message status to READ");
-            } else {
-                System.out.println("Message already marked as READ, no update needed.");
+            // Check the status from the event and update the message accordingly
+            if (event.getStatus() != null) {
+                // If the status is "DELETED", update the status to DELETED
+                if (event.getStatus().equals("DELETED")) {
+                    if (message.getStatus() != MessageStatus.DELETE) {
+                        message.setStatus(MessageStatus.DELETE); // Set to DELETED status
+                        messageRepository.save(message);  // Save the updated message
+                        System.out.println("Updated message status to DELETED");
+                    } else {
+                        System.out.println("Message already marked as DELETED, no update needed.");
+                    }
+                }
+                // If the status is "READ", update the status to READ
+                else if (event.getStatus().equals("READ")) {
+                    if (message.getStatus() != MessageStatus.READ) {
+                        message.setStatus(MessageStatus.READ); // Set to READ status
+                        messageRepository.save(message);  // Save the updated message
+                        System.out.println("Updated message status to READ");
+                    } else {
+                        System.out.println("Message already marked as READ, no update needed.");
+                    }
+                }
+                else if (event.getStatus().equals("SENT")) {
+                    message.setStatus(MessageStatus.READ);
+                    messageRepository.save(message);
+                }
+//                else if (!optionalMessage.get().getText().equals(event.getMessage())) {
+//                    // Update the existing message
+//                    optionalMessage.get().setText(event.getMessage());
+//                    optionalMessage.get().setTimestamp(event.getTimestamp()); // Update timestamp if necessary
+//                    messageRepository.save(optionalMessage.get());
+//                    System.out.println("Updated existing message: ");
+//                }
             }
         } else {
-            System.out.println("Message not found, skipping the status update.");
+            convertEventToMessage(event);
+            System.out.println("CONSUMED MESSAGE");
+        }
+    }
+
+    private Message convertEventToMessage(Event event) {
+        Message message = new Message();
+
+        // Set the message content
+        message.setText(event.getMessage());
+
+        // Convert timestamp to LocalDateTime
+        message.setTimestamp(event.getTimestamp());
+
+        // Set status
+        if (event.getStatus() != null) {
+            message.setStatus(MessageStatus.READ);
         }
 
+        // Create or find the User
+        User user = userRepository.findById(event.getUserId())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setId(event.getUserId());
+                    newUser.setUsername(event.getUsername());
+                    return userRepository.save(newUser);
+                });
+        message.setUser(user);
 
+        messageRepository.save(message);
+        return message;
     }
+
 }
