@@ -78,7 +78,7 @@ public class MessageService {
 
     }
 
-    public MessageDTO deleteMessage(Long id, MessageDTO messageDTO) {
+    public MessageDTO deleteMessage(Long id) {
         Message message = messageRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Message with id " + id + " not found"));
 
