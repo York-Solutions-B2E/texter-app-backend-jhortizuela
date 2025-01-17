@@ -50,8 +50,9 @@ public class KafkaConsumerService {
 
 
         // Find the existing message using userId and messageId
-        Optional<Message> optionalMessage = messageRepository.findByUserIdAndId(event.getUserId(), event.getId());
+        Optional<Message> optionalMessage = messageRepository.findById(event.getId());
 
+        System.out.println("Message found: " + event);
         if (optionalMessage.isPresent()) {
             Message message = optionalMessage.get();
 
@@ -67,27 +68,23 @@ public class KafkaConsumerService {
                         System.out.println("Message already marked as DELETED, no update needed.");
                     }
                 }
-                // If the status is "READ", update the status to READ
-                else if (event.getStatus().equals("READ")) {
-                    if (message.getStatus() != MessageStatus.READ) {
-                        message.setStatus(MessageStatus.READ); // Set to READ status
-                        messageRepository.save(message);  // Save the updated message
-                        System.out.println("Updated message status to READ");
-                    } else {
-                        System.out.println("Message already marked as READ, no update needed.");
-                    }
-                }
+                //listening for new message, if it's sent change it to read
                 else if (event.getStatus().equals("SENT")) {
+                    Optional<Conversation> currentConversation = conversationRepository.findById(1L);
+                    message.setConversation(currentConversation.get());
                     message.setStatus(MessageStatus.READ);
+                    message.setTimestamp(LocalDateTime.now());
+                    message.setText(event.getMessage());
                     messageRepository.save(message);
                 }
-//                else if (!optionalMessage.get().getText().equals(event.getMessage())) {
-//                    // Update the existing message
-//                    optionalMessage.get().setText(event.getMessage());
-//                    optionalMessage.get().setTimestamp(event.getTimestamp()); // Update timestamp if necessary
-//                    messageRepository.save(optionalMessage.get());
-//                    System.out.println("Updated existing message: ");
-//                }
+                //listening for message update
+                else if (event.getStatus().equals("READ")) {
+                    Optional<Conversation> currentConversation = conversationRepository.findById(1L);
+                    message.setConversation(currentConversation.get());
+                    message.setTimestamp(LocalDateTime.now());
+                    message.setText(event.getMessage());
+                    messageRepository.save(message);
+                }
             }
         } else {
             convertEventToMessage(event);
@@ -105,9 +102,7 @@ public class KafkaConsumerService {
         message.setTimestamp(event.getTimestamp());
 
         // Set status
-        if (event.getStatus() != null) {
-            message.setStatus(MessageStatus.READ);
-        }
+        message.setStatus(event.getStatus() != null ? MessageStatus.READ : MessageStatus.SENT);
 
         // Create or find the User
         User user = userRepository.findById(event.getUserId())
@@ -119,6 +114,15 @@ public class KafkaConsumerService {
                 });
         message.setUser(user);
 
+        // Find the Conversation with ID 1L
+        Optional<Conversation> conversationOptional = conversationRepository.findById(1L);
+        if (conversationOptional.isPresent()) {
+            message.setConversation(conversationOptional.get());
+        } else {
+            throw new IllegalStateException("Conversation with ID 1L not found.");
+        }
+
+        // Save the message
         messageRepository.save(message);
         return message;
     }
